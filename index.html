@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #fef7f8;
+      --bg-secondary: #fff5f7;
+      --bg-card: #ffffff;
+      --accent: #e91e8c;
+      --accent-light: #f8b4d9;
+      --accent-soft: #fce4ec;
+      --lavender: #c5b4e3;
+      --lavender-soft: #ede8f5;
+      --rose: #f48fb1;
+      --peach: #ffccbc;
+      --text-primary: #4a3743;
+      --text-muted: #8e7a85;
+      --border: #f5d0dc;
+      --danger: #e91e63;
+      --danger-soft: #fce4ec;
+      --warning: #ff8a80;
+      --success: #69f0ae;
+      --success-soft: #e8f5e9;
+      --shadow: 0 4px 20px rgba(233, 30, 140, 0.08);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg-primary);
+      background-image: radial-gradient(ellipse at top, var(--lavender-soft) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, var(--accent-soft) 0%, transparent 50%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h1::before {
+      content: "💕";
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-pill);
+      transition: all 0.2s;
+}
+    .btn-link:hover {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .btn {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.6rem 1.25rem;
+      border: none;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--rose) 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(233, 30, 140, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(233, 30, 140, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent-light);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Search & Filter Bar */
+    .search-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.75rem;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--border);
+      background: var(--bg-secondary);
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-light);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-group label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    select {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent-light);
+    }
+
+    .table-wrapper {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+    }
+
+    th {
+      background: linear-gradient(180deg, var(--lavender-soft) 0%, var(--accent-soft) 100%);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    tr:last-child {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: var(--accent-soft);
+    }
+
+    .verdict-badge {
+      display: inline-block;
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .verdict-underweight { background: linear-gradient(135deg, #fff8e1, #ffecb3); color: #f57c00; }
+    .verdict-normal { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #2e7d32; }
+    .verdict-overweight { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+    .verdict-obesity { background: linear-gradient(135deg, #fce4ec, #f8bbd9); color: #c2185b; }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .actions .btn {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.85rem;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(74, 55, 67, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.25s ease;
+      box-shadow: 0 20px 60px rgba(233, 30, 140, 0.15);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%);
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .modal-header h2 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.35rem;
+      color: var(--accent);
+    }
+
+    .modal-close {
+      background: var(--accent-soft);
+      border: none;
+      color: var(--accent);
+      font-size: 1.25rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--accent);
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent-light);
+      box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.15);
+    }
+
+    .form-group input:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .form-group small {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 2px solid var(--border);
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      background: var(--bg-secondary);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    /* Patient Detail View */
+    .patient-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .patient-detail-item {
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .patient-detail-item label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .patient-detail-item .value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 0.25rem;
+    }
+
+    .patient-detail-item.verdict-item .value {
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    /* Info Panel */
+    .info-panel {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--lavender-soft);
+      border-radius: var(--radius);
+      border: 1px solid var(--lavender);
+    }
+
+    .info-panel h3 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-panel ul {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-left: 1.25rem;
+      line-height: 1.8;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      z-index: 200;
+      animation: slideIn 0.35s ease;
+      max-width: 320px;
+      box-shadow: var(--shadow);
+    }
+
+    .toast.success { background: linear-gradient(135deg, var(--success), #a5d6a7); color: #1b5e20; }
+    .toast.error { background: linear-gradient(135deg, var(--danger), var(--rose)); color: white; }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .loading::before {
+      content: "💖";
+      display: block;
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      animation: float 1.5s ease-in-out infinite;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state::before {
+      content: "🌸";
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .patient-id {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .patient-count {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .table-wrapper { overflow-x: auto; }
+      table { min-width: 800px; }
+      .container { padding: 1rem; }
+      .patient-detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Patient Management System</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="openAboutModal()">ℹ️ About</button>
+        <button class="btn btn-primary" onclick="openCreateModal()">✨ Add Patient</button>
+      </div>
+    </header>
+
+    <div class="search-filter-bar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by ID, name or city..." oninput="applyFilters()">
+      </div>
+      <div class="filter-group">
+        <label>Filter by gender</label>
+        <select id="filterGender" onchange="applyFilters()">
+          <option value="">All</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Filter by age</label>
+        <select id="filterAge" onchange="applyFilters()">
+          <option value="">All</option>
+          <option value="0-18">0–18</option>
+          <option value="19-35">19–35</option>
+          <option value="36-50">36–50</option>
+          <option value="51+">51+</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Sort by</label>
+        <select id="sortBy" onchange="loadPatients(true)">
+          <option value="height">Height</option>
+          <option value="weight">Weight</option>
+          <option value="bmi">BMI</option>
+        </select>
+        <select id="sortOrder" onchange="loadPatients(true)">
+          <option value="asc">↑ Asc</option>
+          <option value="desc">↓ Desc</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="patient-count" id="patientCount"></div>
+
+    <div class="table-wrapper">
+      <div id="tableContainer">
+        <div class="loading" id="loading">Loading patients...</div>
+        <table id="patientsTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>City</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Height (m)</th>
+              <th>Weight (kg)</th>
+              <th>BMI</th>
+              <th>Verdict</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="patientsBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display: none;">
+          <p>No patients in the system yet.</p>
+          <button class="btn btn-primary" onclick="openCreateModal()">Add your first patient ✨</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <h3>🧮 BMI & Health Verdict</h3>
+      <ul>
+        <li><strong>Formula:</strong> BMI = weight ÷ (height × height)</li>
+        <li>BMI &lt; 18.5 → Underweight</li>
+        <li>18.5 – 24.9 → Normal weight</li>
+        <li>25 – 29.9 → Overweight</li>
+        <li>≥ 30 → Obesity</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Create/Edit Modal -->
+  <div class="modal-overlay" id="patientModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add Patient</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="patientForm" onsubmit="handleSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Patient ID</label>
+            <input type="text" id="patientId" required placeholder="e.g. P006" pattern="[A-Za-z0-9]+">
+            <small>Unique identifier (e.g. P001, P002)</small>
+          </div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="patientName" required placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="patientCity" required placeholder="New York">
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="patientAge" required min="1" max="150" placeholder="30">
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="patientGender" required>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="male">male</option>
+              <option value="female">female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Height (meters)</label>
+            <input type="number" id="patientHeight" required min="0.5" max="3" step="0.01" placeholder="1.75">
+            <small>e.g. 1.75 for 175 cm — BMI & verdict auto-calculated ✨</small>
+          </div>
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" id="patientWeight" required min="1" max="500" step="0.1" placeholder="70">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Create Patient</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Single Patient Modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Patient Details</h2>
+        <button class="modal-close" onclick="closeViewModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="viewModalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+        <button type="button" class="btn btn-primary" id="editFromViewBtn">Edit Patient</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Delete Patient</h2>
+        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="deletePatientName"></strong> (ID: <span id="deletePatientId" class="patient-id"></span>)?</p>
+        <p style="margin-top: 0.75rem; color: var(--text-muted); font-size: 0.9rem;">This action cannot be undone. 💔</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div class="modal-overlay" id="aboutModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>About</h2>
+        <button class="modal-close" onclick="closeAboutModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 1rem;">A lightweight and fully functional Patient Management System built with FastAPI, featuring patient creation, update, delete, sorting, and automatic BMI & health verdict calculation.</p>
+        <p style="margin-bottom: 1rem;"><strong>Tech Stack:</strong> FastAPI • Python 3.10+ • Pydantic • JSON Storage • Uvicorn</p>
+        <p><strong>Features:</strong> Create ✨ Update ✨ Delete ✨ View all ✨ View by ID ✨ Sort by height/weight/BMI ✨ Search by name/city ✨ Filter by age & gender</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let patients = [];
+    let filteredPatients = [];
+    let editPatientId = null;
+    let deletePatientId = null;
+    let viewPatientId = null;
+
+    function getVerdictClass(verdict) {
+      const v = (verdict || '').toLowerCase();
+      if (v.includes('underweight')) return 'verdict-underweight';
+      if (v.includes('normal')) return 'verdict-normal';
+      if (v.includes('overweight')) return 'verdict-overweight';
+      if (v.includes('obes')) return 'verdict-obesity';
+      return 'verdict-normal';
+    }
+
+    function showToast(message, type = 'success') {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    async function fetchPatients() {
+      try {
+        const res = await fetch(`${API_BASE}/view`);
+        const data = await res.json();
+        return Object.entries(data).map(([id, p]) => ({ id, ...p }));
+      } catch (err) {
+        showToast('Failed to load patients. Is the server running?', 'error');
+        return [];
+      }
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const gender = document.getElementById('filterGender').value.toLowerCase();
+      const ageFilter = document.getElementById('filterAge').value;
+
+      filteredPatients = patients.filter(p => {
+        const matchSearch = !search || 
+          (p.id && p.id.toLowerCase().includes(search)) ||
+          (p.name && p.name.toLowerCase().includes(search)) || 
+          (p.city && p.city.toLowerCase().includes(search));
+        const matchGender = !gender || (p.gender && p.gender.toLowerCase() === gender);
+        let matchAge = true;
+        if (ageFilter) {
+          const age = p.age ?? 0;
+          if (ageFilter === '0-18') matchAge = age <= 18;
+          else if (ageFilter === '19-35') matchAge = age >= 19 && age <= 35;
+          else if (ageFilter === '36-50') matchAge = age >= 36 && age <= 50;
+          else if (ageFilter === '51+') matchAge = age >= 51;
+        }
+        return matchSearch && matchGender && matchAge;
+      });
+
+      renderTable(filteredPatients);
+      updatePatientCount();
+    }
+
+    function updatePatientCount() {
+      const el = document.getElementById('patientCount');
+      const total = patients.length;
+      const shown = filteredPatients.length;
+      el.textContent = total === shown 
+        ? `Showing ${total} patient${total !== 1 ? 's' : ''} 💕` 
+        : `Showing ${shown} of ${total} patients`;
+    }
+
+    function renderTable(list) {
+      const table = document.getElementById('patientsTable');
+      const emptyState = document.getElementById('emptyState');
+      const tbody = document.getElementById('patientsBody');
+
+      if (list.length === 0) {
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+        emptyState.querySelector('p').textContent = patients.length === 0 
+          ? 'No patients in the system yet.' 
+          : 'No patients match your filters.';
+        return;
+      }
+
+      table.style.display = 'table';
+      emptyState.style.display = 'none';
+      tbody.innerHTML = list.map(p => {
+        const idEsc = String(p.id).replace(/"/g, '&quot;');
+        const nameEsc = String(p.name || '').replace(/"/g, '&quot;');
+        return `
+        <tr onclick="openViewModal('${idEsc}')">
+          <td><span class="patient-id">${p.id}</span></td>
+          <td>${p.name}</td>
+          <td>${p.city}</td>
+          <td>${p.age}</td>
+          <td>${p.gender}</td>
+          <td>${p.height}</td>
+          <td>${p.weight}</td>
+          <td>${p.bmi ?? '—'}</td>
+          <td><span class="verdict-badge ${getVerdictClass(p.verdict)}">${p.verdict ?? '—'}</span></td>
+          <td class="actions" onclick="event.stopPropagation()">
+            <button class="btn btn-secondary" data-edit-id="${idEsc}" onclick="openEditModal(this.dataset.editId)">Edit</button>
+            <button class="btn btn-danger" data-delete-id="${idEsc}" data-delete-name="${nameEsc}" onclick="openDeleteModal(this.dataset.deleteId, this.dataset.deleteName)">Delete</button>
+          </td>
+        </tr>
+      `}).join('');
+    }
+
+    async function loadPatients(useSort = false) {
+      const loading = document.getElementById('loading');
+      const table = document.getElementById('patientsTable');
+      const emptyState = document.getElementById('emptyState');
+      loading.style.display = 'block';
+      table.style.display = 'none';
+      emptyState.style.display = 'none';
+
+      patients = await fetchPatients();
+
+      if (useSort && patients.length > 0) {
+        const sortBy = document.getElementById('sortBy').value;
+        const order = document.getElementById('sortOrder').value;
+        const field = sortBy;
+        const dir = order === 'asc' ? 1 : -1;
+        patients.sort((a, b) => {
+          const va = a[field] ?? 0;
+          const vb = b[field] ?? 0;
+          return (va > vb ? 1 : va < vb ? -1 : 0) * dir;
+        });
+      }
+
+      loading.style.display = 'none';
+      filteredPatients = [...patients];
+      applyFilters();
+    }
+
+    function openCreateModal() {
+      editPatientId = null;
+      document.getElementById('modalTitle').textContent = 'Add Patient';
+      document.getElementById('submitBtn').textContent = 'Create Patient';
+      document.getElementById('patientForm').reset();
+      document.getElementById('patientId').disabled = false;
+      document.getElementById('patientModal').classList.add('active');
+    }
+
+    function openEditModal(id) {
+      const p = patients.find(x => x.id === id);
+      if (!p) return;
+      editPatientId = id;
+      document.getElementById('modalTitle').textContent = 'Edit Patient';
+      document.getElementById('submitBtn').textContent = 'Update Patient';
+      document.getElementById('patientId').value = p.id;
+      document.getElementById('patientId').disabled = true;
+      document.getElementById('patientName').value = p.name;
+      document.getElementById('patientCity').value = p.city;
+      document.getElementById('patientAge').value = p.age;
+      document.getElementById('patientGender').value = p.gender;
+      document.getElementById('patientHeight').value = p.height;
+      document.getElementById('patientWeight').value = p.weight;
+      document.getElementById('patientModal').classList.add('active');
+      closeViewModal();
+    }
+
+    function openViewModal(id) {
+      const p = patients.find(x => x.id === id);
+      if (!p) return;
+      viewPatientId = id;
+      const body = document.getElementById('viewModalBody');
+      body.innerHTML = `
+        <div class="patient-detail-grid">
+          <div class="patient-detail-item"><label>Patient ID</label><div class="value">${p.id}</div></div>
+          <div class="patient-detail-item"><label>Name</label><div class="value">${p.name}</div></div>
+          <div class="patient-detail-item"><label>City</label><div class="value">${p.city}</div></div>
+          <div class="patient-detail-item"><label>Age</label><div class="value">${p.age}</div></div>
+          <div class="patient-detail-item"><label>Gender</label><div class="value">${p.gender}</div></div>
+          <div class="patient-detail-item"><label>Height</label><div class="value">${p.height} m</div></div>
+          <div class="patient-detail-item"><label>Weight</label><div class="value">${p.weight} kg</div></div>
+          <div class="patient-detail-item"><label>BMI</label><div class="value">${p.bmi ?? '—'}</div></div>
+          <div class="patient-detail-item verdict-item" style="grid-column: 1 / -1;">
+            <label>Health Verdict</label>
+            <span class="verdict-badge ${getVerdictClass(p.verdict)}">${p.verdict ?? '—'}</span>
+          </div>
+        </div>
+      `;
+      document.getElementById('editFromViewBtn').onclick = () => openEditModal(id);
+      document.getElementById('viewModal').classList.add('active');
+    }
+
+    function closeViewModal() {
+      document.getElementById('viewModal').classList.remove('active');
+      viewPatientId = null;
+    }
+
+    function openAboutModal() {
+      document.getElementById('aboutModal').classList.add('active');
+    }
+
+    function closeAboutModal() {
+      document.getElementById('aboutModal').classList.remove('active');
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const payload = {
+        id: document.getElementById('patientId').value.trim(),
+        name: document.getElementById('patientName').value.trim(),
+        city: document.getElementById('patientCity').value.trim(),
+        age: parseInt(document.getElementById('patientAge').value, 10),
+        gender: document.getElementById('patientGender').value,
+        height: parseFloat(document.getElementById('patientHeight').value),
+        weight: parseFloat(document.getElementById('patientWeight').value)
+      };
+
+      try {
+        if (editPatientId) {
+          const res = await fetch(`${API_BASE}/edit/${editPatientId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: payload.name,
+              city: payload.city,
+              age: payload.age,
+              gender: payload.gender,
+              height: payload.height,
+              weight: payload.weight
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || 'Update failed');
+          showToast('Patient updated successfully ✨');
+        } else {
+          const res = await fetch(`${API_BASE}/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || 'Create failed');
+          showToast('Patient created successfully ✨');
+        }
+        closeModal();
+        loadPatients(true);
+      } catch (err) {
+        showToast(err.message || 'Operation failed', 'error');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('patientModal').classList.remove('active');
+    }
+
+    function openDeleteModal(id, name) {
+      deletePatientId = id;
+      document.getElementById('deletePatientId').textContent = id;
+      document.getElementById('deletePatientName').textContent = name || id;
+      document.getElementById('deleteModal').classList.add('active');
+      document.getElementById('confirmDeleteBtn').onclick = confirmDelete;
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('active');
+      deletePatientId = null;
+    }
+
+    async function confirmDelete() {
+      if (!deletePatientId) return;
+      try {
+        const res = await fetch(`${API_BASE}/delete/${deletePatientId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Delete failed');
+        showToast('Patient deleted');
+        closeDeleteModal();
+        closeViewModal();
+        loadPatients(true);
+      } catch (err) {
+        showToast(err.message || 'Delete failed', 'error');
+      }
+    }
+
+    document.getElementById('patientModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+    document.getElementById('deleteModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeDeleteModal();
+    });
+    document.getElementById('viewModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeViewModal();
+    });
+    document.getElementById('aboutModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeAboutModal();
+    });
+
+    loadPatients();
+  </script>
+</body>
+</html>

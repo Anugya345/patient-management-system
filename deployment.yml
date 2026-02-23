@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-app
+  labels:
+    app: patient-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-app
+  template:
+    metadata:
+      labels:
+        app: patient-app
+    spec:
+      containers:
+      - name: patient-container
+        image: anugya7459/patient-management-system:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /about
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /about
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        # Resource limits
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        # Environment variables
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"

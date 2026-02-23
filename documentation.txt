@@ -1,0 +1,185 @@
+# Patient Management System - API Documentation
+
+## Project Overview
+This is a fully functional Patient Management System API built using FastAPI, a modern, fast (high-performance) web framework for building APIs with Python 3. The system manages patient records allowing creation, retrieval, update, deletion, and sorting of patient data.
+
+---
+
+## Imported Libraries and Their Purpose
+
+- **fastapi**: The web framework to create HTTP REST API endpoints easily.
+- **Path, Query, HTTPException** from fastapi: Used to define parameters for endpoints with validation and to handle HTTP errors.
+- **JSONResponse**: To send JSON formatted HTTP responses.
+- **json**: For reading and writing patient data to a JSON file on disk.
+- **pydantic**: For data validation and settings management using Python type annotations.
+- **BaseModel**: Base class to define data models/schemas.
+- **Field**: Used to provide extra metadata and validation constraints on the model fields.
+- **computed_field**: Decorator used for creating readonly computed properties on the data model.
+- **Annotated, Optional** from typing: Annotated for enriching type hints with metadata, Optional for fields that may be omitted.
+
+---
+
+## Data Models
+
+### Patient (Pydantic Model)
+Defines schema and validation constraints for patient data.
+
+Fields:
+- `id` (str): Unique patient identifier. Example: "P001"
+- `name` (str): Full name of the patient.
+- `city` (str): City where the patient lives.
+- `age` (int): Age in years.
+- `gender` (str): Gender.
+- `height` (float): Height in centimeters. Must be > 0.
+- `weight` (float): Weight in kilograms. Must be > 0.
+
+Computed Fields:
+- `bmi` (float): Calculated Body Mass Index = weight / (height in meters)^2
+- `verdict` (str): BMI classification based on value:
+  - Underweight (<18.5)
+  - Normal weight (18.5–24.9)
+  - Overweight (25–29.9)
+  - Obesity (>=30)
+
+### PatientUpdate (Pydantic Model)
+Schema for partial updates. All fields are optional except `id` which cannot be updated.
+
+---
+
+## Helper Functions
+
+### `load_data()`
+Reads patient data from `patients.json` file on disk and returns it as a Python dictionary.
+- Uses `json.load` to parse the JSON.
+
+### `save_data(data: dict)`
+Saves the given patient data dictionary to `patients.json` file.
+- Uses `json.dump` to write JSON formatted text to the file.
+
+---
+
+## API Endpoints
+
+### GET `/`
+Returns a welcome message confirming the API is running.
+Response:
+```json
+{
+  "message": "Patient management system"
+}
+```
+
+### GET `/about`
+Returns a brief about message explaining the system.
+Response:
+```json
+{
+  "About": "A fully functional patient management system to manage patient records."
+}
+```
+
+### GET `/view`
+Retrieves and returns the entire patient data as JSON.
+
+### GET `/patient/{patient_id}`
+Path Parameter:
+- `patient_id` (str): ID of the patient to retrieve.
+
+Returns the patient data if found; otherwise raises 404 error.
+
+### GET `/sort`
+Query Parameters:
+- `sort_by` (str): Field to sort by; must be one of `weight`, `height`, or `bmi`.
+- `order` (str): Optional, sorting order; `asc` (default) or `desc`.
+
+Returns a list of patients sorted by the requested field and order.
+
+Raises 400 error if invalid sort field or order is given.
+
+### POST `/create`
+Request Body:
+- A JSON Patient object.
+
+Creates a new patient record. Raises 400 error if patient ID already exists.
+
+Returns 201 response with success message.
+
+### PUT `/edit/{patient_id}`
+Path Parameter:
+- `patient_id` (str): ID of patient to update.
+
+Request Body:
+- JSON object with any subset of PatientUpdate fields (all optional).
+
+Updates existing patient record with new provided fields. Raises 404 if not found.
+
+Returns 200 response with success message.
+
+### DELETE `/delete/{patient_id}`
+Path Parameter:
+- `patient_id` (str): ID of patient to delete.
+
+Deletes the patient record if found. Raises 404 if not found.
+
+Returns 200 response with success message.
+
+---
+
+## Installation and Running Instructions
+
+1. Install required packages:
+```
+pip install fastapi pydantic uvicorn
+```
+
+2. Run the FastAPI server:
+```
+uvicorn main:app --reload
+```
+
+---
+
+## Validation and Error Handling
+
+- Path and query parameters are validated for type and allowed values using FastAPI's built-in validations.
+- Pydantic models enforce field types, constraints (e.g., height > 0).
+- Custom computed properties calculate BMI and classification dynamically.
+- HTTPException is raised with appropriate status codes (400, 404) to inform clients of errors.
+
+---
+
+## Example Usage with curl
+
+- Get all patients:
+```
+curl -X GET http://localhost:8000/view
+```
+
+- Create patient:
+```
+curl -X POST http://localhost:8000/create -H "Content-Type: application/json" -d '{
+  "id": "P002",
+  "name": "Alice",
+  "city": "Boston",
+  "age": 28,
+  "gender": "Female",
+  "height": 165.0,
+  "weight": 60.0
+}'
+```
+
+- Update patient:
+```
+curl -X PUT http://localhost:8000/edit/P002 -H "Content-Type: application/json" -d '{
+  "weight": 62.5
+}'
+```
+
+- Delete patient:
+```
+curl -X DELETE http://localhost:8000/delete/P002
+```
+
+---
+
+This concludes the detailed documentation for the Patient Management System API.

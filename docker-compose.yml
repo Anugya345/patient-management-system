@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  patient-management:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./patients.json:/app/patients.json
+    restart: unless-stopped
